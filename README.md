@@ -6,7 +6,7 @@ In this project, I reinforced my knowledge of network security by designing a se
 ## Objectives
 - Design and implement a secure network topology for the daycare center.
 - Configure and customize firewalls for enhanced security.
-- Set up secure VPN connections for remote access and file transfers.
+- Set up secure VPN connections for remote access and file transfers. 
 - Perform penetration testing to identify vulnerabilities in the system.
  Monitor and log network traffic to detect potential security issues.
 
