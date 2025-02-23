@@ -6,12 +6,12 @@ In this project, I reinforced my knowledge of network security by designing a se
 ## Objectives
 - Design and implement a secure network topology for the daycare center.
 - Configure and customize firewalls for enhanced security.
+-  Monitor and log network traffic to detect potential security issues.
 - Perform penetration testing to identify vulnerabilities in the system.
-- Monitor and log network traffic to detect potential security issues.
+
 
 ### Tools Used
 -GNS3 and Virtualbox for Network real world Simulation
-- Windows Defender Firewall: Configured to protect individual devices within the daycare center network.
 - pfSense: Used for configuring and managing firewalls,and custom firewall rules to ensure network security.
 - Wireshark: For capturing and analyzing network traffic to ensure data integrity and security.
 - Metasploit/Kali Linux: Used for penetration testing to assess the security of the network and firewall setup.
@@ -49,13 +49,47 @@ In this project, I reinforced my knowledge of network security by designing a se
 
 <img width="638" alt="2025-02-21 (8)" src="https://github.com/user-attachments/assets/25c35122-437a-4813-9721-f5a6c3245e0d" />
 
-- ![Firewall Rules](screenshots/firewall_rules.png)
+## 4. Firewall Rules for Each VLAN
+**Here's a look at the pfsense console and how I assigned different Ip's
+<img width="503" alt="2025-02-21 (5)" src="https://github.com/user-attachments/assets/f594c729-6ddf-4f42-9d80-354b6368e507" />
 
-## 4. Testing and Verification
+- navigated to **Firewall > Rules** in web GUI pfSense.
+-  I selected the VLAN interface 
+-  Added new rules to allow or restrict traffic:
+  
+1- Allow Admin VLAN to Access Staff VLAN
+- Source: VLAN20_Admin net
+- Destination: VLAN30_Staff net
+- Action: Pass
+- Protocol: Any
+<img width="629" alt="2025-02-22 (5)" src="https://github.com/user-attachments/assets/715a7c17-2705-44bf-b17e-253094547d52" />
+
+2- Block Guest/Kids VLAN from Accessing Admin VLAN
+- Source: VLAN40_Guest net
+- Destination: VLAN20_Office net
+- Action: Block
+- Protocol: Any
+
+3- Allow Internet Access for Guest/Kids VLAN
+- Source: VLAN40_Guest net
+- Destination: Any
+- Action: Pass
+- Protocol: TCP/UDP
+- Destination Port Range: 80 (HTTP) and 443 (HTTPS)
+
+<img width="623" alt="2025-02-22 (4)" src="https://github.com/user-attachments/assets/ad29f2b0-bec5-4841-b580-652fa4dc0f5e" />
+
+
+## 5. Testing and Verification
 - I powered on pfSense and the VirtualBox VMs.
 - I verified IP assignments with ping tests and checked the firewall logs.
-- ![Testing](screenshots/testing.png)
 
+- Here's after I allowed Admin VLAN  to access Staff VLAN 
+<img width="553" alt="2025-02-21 (16)" src="https://github.com/user-attachments/assets/bf1d4445-40c0-4353-b4c7-2abfd4eda3c8" />
+
+
+- Here's after I blocked the Guest/Kids VLAN from accessing the Admin
+<img width="663" alt="2025-02-21 (15)" src="https://github.com/user-attachments/assets/8b8a8247-be92-4891-a8f9-0208d04bfdb7" />
 
 
 
