@@ -6,34 +6,56 @@ In this project, I reinforced my knowledge of network security by designing a se
 ## Objectives
 - Design and implement a secure network topology for the daycare center.
 - Configure and customize firewalls for enhanced security.
-- Set up secure VPN connections for remote access and file transfers. 
 - Perform penetration testing to identify vulnerabilities in the system.
- Monitor and log network traffic to detect potential security issues.
+- Monitor and log network traffic to detect potential security issues.
 
 ### Tools Used
 -GNS3 and Virtualbox for Network real world Simulation
 - Windows Defender Firewall: Configured to protect individual devices within the daycare center network.
-- pfSense: Used for configuring and managing firewalls, VPNs, and custom firewall rules to ensure network security.
+- pfSense: Used for configuring and managing firewalls,and custom firewall rules to ensure network security.
 - Wireshark: For capturing and analyzing network traffic to ensure data integrity and security.
 - Metasploit/Kali Linux: Used for penetration testing to assess the security of the network and firewall setup.
 
 ## Project Breakdown
 
-## **1. Designing the Network Topology**
--sketch
-![thumbnail_IMG_0775](https://github.com/user-attachments/assets/bab3748e-cb2c-4ff3-aa61-5127d6fe521c)
-- Connected only pfsense to **WAN (em0) to NAT** for Internet access.
-- Connected **LAN (em1) to Host-Only Adapter** for VLANs and VirtualBox VMs.
- ![2025-02-05 (1)](https://github.com/user-attachments/assets/31137831-57be-4d1f-b795-39375995d952) 
+## 1. Connecting VirtualBox VMs to GNS3
+- I installed VirtualBox and imported my Windows and Kali Linux VMs.
+- I linked the VMs to GNS3 using Edit > Preferences > VirtualBox VMs.
+- I connected each VM’s network adapter to the switch.
+- Here's the sketch I drew that guided me through out the project
+![thumbnail_IMG_0775](https://github.com/user-attachments/assets/d6244640-9769-4071-9863-5afea0fe3293)
 
-## **2. Implementing Network Segmentation**
-- Added **pfSense (router), switch, and PC VMs (Windows & Kali Linux)** to GNS3.
-![2025-02-05](https://github.com/user-attachments/assets/581f77b9-a492-4680-8c76-e138149ec623)
-- Configured and used an **Ethernet switch to automatically handle VLAN traffic** without requiring manual trunk/access port configurations.
-![2025-02-01 (8)](https://github.com/user-attachments/assets/db01030c-d25b-4bff-9b56-7b8bae930c1e)
-- Connected **pfSense LAN (em1) to the switch** to handle VLANs.
-- Connected **Windows and Kali Linux VMs** to the switch for network segmentation.
-![2025-02-04](https://github.com/user-attachments/assets/f64aead3-041f-4168-985f-224dc64b0fb2)
+## 2. Setting Up the Network Topology
+- I created a new GNS3 project.
+- I added a pfSense VM and Ethernet switch.
+- I connected pfSense’s WAN to the internet and its LAN to the switch.
+<img width="639" alt="2025-02-21 (4)" src="https://github.com/user-attachments/assets/b3b147b0-c62c-404a-bd99-926b3ce0c5be" />
+
+## 3. Configuring VLANs and pfSense
+- I created VLANs on pfSense.
+- **VLAN 10** (Admin Network): 192.168.20.1 - 192.168.20.100
+- **VLAN 20** (Staff Network): 192.168.30.1 - 192.168.30.100
+- **VLAN 30** (Guest/Kids Network): 192.40.1 - 192.168.40.100
+- I assigned VLAN interfaces, set up DHCP, and applied basic firewall rules.
+<img width="690" alt="2025-02-21 (7)" src="https://github.com/user-attachments/assets/8049a568-0ca5-4424-b239-c21dfb791b19" />
+
+- Here's how I configured the staff network
+  
+<img width="346" alt="2025-02-21 (9)" src="https://github.com/user-attachments/assets/86145ef2-de80-47fa-b2b8-0e9fed8da9dc" />
+
+<img width="558" alt="2025-02-21 (10)" src="https://github.com/user-attachments/assets/efa940cf-145e-4684-8959-afc1d2c74afb" />
+
+- Here's how it looks after configurating each VLAN's 
+
+<img width="638" alt="2025-02-21 (8)" src="https://github.com/user-attachments/assets/25c35122-437a-4813-9721-f5a6c3245e0d" />
+
+- ![Firewall Rules](screenshots/firewall_rules.png)
+
+## 4. Testing and Verification
+- I powered on pfSense and the VirtualBox VMs.
+- I verified IP assignments with ping tests and checked the firewall logs.
+- ![Testing](screenshots/testing.png)
+
 
 
 
