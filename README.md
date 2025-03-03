@@ -1,7 +1,7 @@
 # Network-Security-Daycare-Project
 
 ## Scenerio:
-In this project, I reinforced my knowledge of network security by designing a secure network topology and configuring various security measures for a daycare center. This was to ensure the daycare's network is secure, protecting sensitive data like children's personal information, while maintaining a stable, efficient network infrastructure.
+My role as a part-time assistant teacher in a daycare inspired me to design a secure network set-up simulation. In this project, I reinforced my knowledge of network security by designing a secure network topology and configuring various security measures for a daycare center. This was to ensure the daycare's network is secure, protecting sensitive data like children's personal information, while maintaining a stable, efficient network infrastructure.
 
 ## Objectives
 - Design and implement a secure network topology for the daycare center.
