@@ -14,83 +14,127 @@ My role as a part-time assistant teacher in a daycare inspired me to design a se
 -GNS3 and Virtualbox for Network real world Simulation
 - pfSense: Used for configuring and managing firewalls,and custom firewall rules to ensure network security.
 - Wireshark: For capturing and analyzing network traffic to ensure data integrity and security.
-- Metasploit/Kali Linux: Used for penetration testing to assess the security of the network and firewall setup.
+- Kali Linux: Used for penetration testing to assess the security of the network and firewall setup.
 
 ## Project Breakdown
 
 ## 1. Connecting VirtualBox VMs to GNS3
-- I installed VirtualBox and imported my Windows and Kali Linux VMs.
-- I linked the VMs to GNS3 using Edit > Preferences > VirtualBox VMs.
-- I connected each VM’s network adapter to the switch.
+- I installed VirtualBox and imported my Windows VM as Admin PC.
+- I linked the VM to GNS3 using Edit > Preferences > VirtualBox VMs.
+- I connected windows VM network adapter to the switch.
 - Here's the sketch I drew that guided me through out the project
-![thumbnail_IMG_0775](https://github.com/user-attachments/assets/d6244640-9769-4071-9863-5afea0fe3293)
+![IMG_0856](https://github.com/user-attachments/assets/a98a1929-f8eb-4634-9607-be648b4c2484)
 
-## 2. Setting Up the Network Topology
+## 2. Network Topology
 - I created a new GNS3 project.
-- I added a pfSense VM and Ethernet switch.
-- I connected pfSense’s WAN to the internet and its LAN to the switch.
-<img width="639" alt="2025-02-21 (4)" src="https://github.com/user-attachments/assets/b3b147b0-c62c-404a-bd99-926b3ce0c5be" />
+- **Router**: pfSense (Router1) manages the network and connects to the internet (NAT1).
+- **LAN 1**: Admin and Staff computers are connected through **Switch1**.
+- **LAN 2**: Guests and Kids computers are connected through **Switch2**.
+- **Firewall Rules**: pfSense controls traffic between these LANs.
+<img width="526" alt="2025-03-05" src="https://github.com/user-attachments/assets/9161c5d9-73e4-4b5d-a1a8-db883aceebee" />
 
-## 3. Configuring VLANs and pfSense
-- I created VLANs on pfSense.
-- **VLAN 10** (Admin Network): 192.168.20.1 - 192.168.20.100
-- **VLAN 20** (Staff Network): 192.168.30.1 - 192.168.30.100
-- **VLAN 30** (Guest/Kids Network): 192.40.1 - 192.168.40.100
-- I assigned VLAN interfaces, set up DHCP, and applied basic firewall rules.
-<img width="690" alt="2025-02-21 (7)" src="https://github.com/user-attachments/assets/8049a568-0ca5-4424-b239-c21dfb791b19" />
+## 3. **Assign IP Addresses**
+| Interface | Network | IP Address |
+|-----------|--------|------------|
+| **WAN** | Internet (NAT1) | Assigned by DHCP |
+| **LAN1** | Admin & Staff | 172.30.0.254/24 |
+| **LAN2** | Guests & Kids | 172.30.1.254/24 |
 
-- Here's how I configured the staff network
-  
-<img width="346" alt="2025-02-21 (9)" src="https://github.com/user-attachments/assets/86145ef2-de80-47fa-b2b8-0e9fed8da9dc" />
+<img width="765" alt="2025-03-05 (9)" src="https://github.com/user-attachments/assets/cac63718-2a6d-42f9-8cee-bcef7e59d842" />
 
-<img width="558" alt="2025-02-21 (10)" src="https://github.com/user-attachments/assets/efa940cf-145e-4684-8959-afc1d2c74afb" />
 
-- Here's how it looks after configurating each VLAN's 
+**Device IP Assignments:**
+| Device  | Network | IP Address |
+|---------|--------|------------|
+| **Admin**  | LAN1 | 172.30.0.2 |
+| **Staff**  | LAN1 | 172.30.0.4 |
+| **Guest**  | LAN2 | 172.30.1.2|
+| **Kids**   | LAN2 | 172.30.1.4 |
 
-<img width="638" alt="2025-02-21 (8)" src="https://github.com/user-attachments/assets/25c35122-437a-4813-9721-f5a6c3245e0d" />
 
 ## 4. Firewall Rules for Each VLAN
 **Here's a look at the pfsense console and how I assigned different Ip's
-<img width="503" alt="2025-02-21 (5)" src="https://github.com/user-attachments/assets/f594c729-6ddf-4f42-9d80-354b6368e507" />
+<img width="601" alt="2025-03-05 (7)" src="https://github.com/user-attachments/assets/f896655d-53af-4407-8511-3e713661b2f8" />
 
 - navigated to **Firewall > Rules** in web GUI pfSense.
--  I selected the VLAN interface 
+-  I selected the LAN interface 
 -  Added new rules to allow or restrict traffic:
-  
-1- Allow Admin VLAN to Access Staff VLAN
-- Source: VLAN20_Admin net
-- Destination: VLAN30_Staff net
-- Action: Pass
-- Protocol: Any
-<img width="629" alt="2025-02-22 (5)" src="https://github.com/user-attachments/assets/715a7c17-2705-44bf-b17e-253094547d52" />
 
-2- Block Guest/Kids VLAN from Accessing Admin VLAN
-- Source: VLAN40_Guest net
-- Destination: VLAN20_Office net
-- Action: Block
-- Protocol: Any
+ **1- Allow LAN1 (Admin & Staff) to Access LAN2 (Guests & Kids)**  
+- **Source**: LAN1 net  
+- **Destination**: LAN2 net  
+- **Action**: Pass  
+- **Protocol**: Any  
 
-3- Allow Internet Access for Guest/Kids VLAN
-- Source: VLAN40_Guest net
-- Destination: Any
-- Action: Pass
-- Protocol: TCP/UDP
-- Destination Port Range: 80 (HTTP) and 443 (HTTPS)
+**2- Allow Admin to Access Staff**  
+- **Source**: Admin (172.30.0.2)  
+- **Destination**: Staff (172.30.0.4)  
+- **Action**: Pass  
+- **Protocol**: Any  
 
-<img width="623" alt="2025-02-22 (4)" src="https://github.com/user-attachments/assets/ad29f2b0-bec5-4841-b580-652fa4dc0f5e" />
+ **3- Block Staff from Accessing Admin**  
+- **Source**: Staff (172.30.0.4)
+- **Destination**: Admin (172.30.0.2) 
+- **Action**: Block  
+- **Protocol**: Any  
+
+ **4- Block All Access to Admin PC**  
+- **Source**: Any  
+- **Destination**: Admin (172.30.0.2)  
+- **Action**: Block  
+- **Protocol**: Any  
+
+ **5- Allow Internet Access for LAN1 (Admin & Staff)**  
+- **Source**: LAN1 net  
+- **Destination**: Any  
+- **Action**: Pass  
+- **Protocol**: TCP/UDP  
+- **Destination Port Range**: 80 (HTTP) and 443 (HTTPS)
+
+**6- Allow Internet Access for LAN2 (Guests & Kids)**  
+- **Source**: LAN2 net 
+- **Destination**: Any 
+- **Action**: Pass  
+- **Protocol**: TCP/UDP  
+- **Destination Port Range**: 80 (HTTP) and 443 (HTTPS)
+
+**7- Allow Access from LAN1 to LAN2**  
+- **Source**: LAN1 net 
+- **Destination**: LAN2 net  
+- **Action**: Pass  
+- **Protocol**: Any
+
+<img width="707" alt="2025-03-05 (15)" src="https://github.com/user-attachments/assets/66122fe9-ca0d-4653-b299-b7ab2234c5c8" />
+
 
 
 ## 5. Testing and Verification
 - I powered on pfSense and the VirtualBox VMs.
-- I verified IP assignments with ping tests and checked the firewall logs.
-
-- Here's after I allowed Admin VLAN  to access Staff VLAN 
-<img width="553" alt="2025-02-21 (16)" src="https://github.com/user-attachments/assets/bf1d4445-40c0-4353-b4c7-2abfd4eda3c8" />
+- I verified IP assignments with ping tests
 
 
-- Here's after I blocked the Guest/Kids VLAN from accessing the Admin
-<img width="663" alt="2025-02-21 (15)" src="https://github.com/user-attachments/assets/8b8a8247-be92-4891-a8f9-0208d04bfdb7" />
+**1- Admin PC should be able to access staff PC **
+- ping 172.30.0.4
+  
+<img width="363" alt="2025-03-05 (16)" src="https://github.com/user-attachments/assets/440c0f80-b092-490f-9c53-39481471c89d" />
 
+**2- LAN2 devices should be able to access internet but not allowed to access LAN1 
+- ping 8.8.8.8
+- ping 172.30.0.2
+
+<img width="381" alt="2025-03-05 (17)" src="https://github.com/user-attachments/assets/969b9e3c-b684-45b1-a5d3-b9e319c1e069" />
+
+**2- LAN1 devices should be able to access LAN2 devices **
+-ping 172.30.1.2
+
+<img width="379" alt="2025-03-05 (4)" src="https://github.com/user-attachments/assets/b79a7aab-f444-4e30-b7b3-985c50526f8e" />
+
+
+### **6- Analyzing Traffic in Wireshark**  
+
+**1- Wirecapture for LAN1 to LAN2 ping request 
+
+<img width="641" alt="2025-03-18 (2)" src="https://github.com/user-attachments/assets/cef511ff-8c23-4573-8191-a7a488e2abe5" />
 
 
 
